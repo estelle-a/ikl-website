@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IOKELA — Human-Centric Innovation</title>
+<meta name="description" content="IOKELA is a human-centric innovation consultancy. Microsoft Learning Partner. Certified training on AI, Cloud, Cyber, Edge & beyond." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; padding: 0; background: #110D24; overflow-x: hidden; min-height: 100vh; }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  @keyframes pulse-slow { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+  @media(max-width:768px) {
+    .nav-links { display: none !important; }
+    .mobile-burger { display: block !important; }
+    .tracks-grid { grid-template-columns: 1fr !important; }
+    .cred-grid { grid-template-columns: 1fr !important; }
+  }
+  input::placeholder, textarea::placeholder { color: rgba(238,234,245,0.3); }
+  select option { background: #110D24; color: #fff; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.5/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const PICTO = "data:image/png;base64,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";
+
+const C = {
+  indigo: "#2C1F55",
+  blue: "#1B1B87",
+  teal: "#0EC6D6",
+  tealTint: "#E0F7FA",
+  gold: "#ECBA53",
+  goldTint: "#FFF8E7",
+  lavender: "#EEEAF5",
+  bg: "#110D24",
+  bgCard: "rgba(27,27,135,0.08)",
+  bgCardHover: "rgba(27,27,135,0.14)",
+  border: "rgba(44,31,85,0.2)",
+  borderHover: "rgba(14,198,214,0.5)",
+  textMuted: "rgba(238,234,245,0.45)",
+  textBody: "rgba(238,234,245,0.6)",
+  sectionNum: "rgba(44,31,85,0.55)",
+  sectionLine: "rgba(44,31,85,0.4)",
+};
+
+function useInView(threshold = 0.12) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.unobserve(el); } }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
+
+function Reveal({ children, delay = 0, style = {} }) {
+  const [ref, visible] = useInView();
+  return (<div ref={ref} style={{ ...style, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(48px)", transition: `opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s` }}>{children}</div>);
+}
+
+function Marquee({ text, speed = 30 }) {
+  return (<div style={{ overflow: "hidden", whiteSpace: "nowrap", padding: "20px 0", borderTop: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}>
+    <div style={{ display: "inline-block", animation: `marquee ${speed}s linear infinite` }}>
+      {Array(6).fill(null).map((_, i) => (<span key={i} style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(14px, 2vw, 18px)", color: C.sectionNum, letterSpacing: "4px", textTransform: "uppercase", marginRight: 64 }}>{text} <span style={{ color: C.teal }}>●</span>{" "}</span>))}
+    </div>
+  </div>);
+}
+
+function SectionLabel({ num, label }) {
+  return (<Reveal><div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 64 }}>
+    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: C.sectionNum, letterSpacing: "3px", textTransform: "uppercase" }}>{num}</span>
+    <div style={{ width: 40, height: 1, background: C.sectionLine }} />
+    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: C.sectionNum, letterSpacing: "3px", textTransform: "uppercase" }}>{label}</span>
+  </div></Reveal>);
+}
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { const h = () => setScrolled(window.scrollY > 80); window.addEventListener("scroll", h); return () => window.removeEventListener("scroll", h); }, []);
+  const go = (id) => { document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); setOpen(false); };
+  const links = ["manifesto", "what-we-do", "community", "join"];
+  return (
+    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: scrolled ? "rgba(17,13,36,0.96)" : "transparent", backdropFilter: scrolled ? "blur(16px)" : "none", transition: "all 0.4s" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 clamp(20px,4vw,48px)", height: 72, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div onClick={() => go("hero")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+          <img src={PICTO} alt="" style={{ height: 40, width: 40, objectFit: "contain", borderRadius: "50%" }} />
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, color: "#fff", letterSpacing: "3px" }}>IOKELA</span>
+        </div>
+        <div className="nav-links" style={{ display: "flex", gap: 36, alignItems: "center" }}>
+          {links.map(l => (<button key={l} onClick={() => go(l)} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Space Mono', monospace", fontSize: 12, color: C.textBody, letterSpacing: "2px", textTransform: "uppercase", transition: "color 0.3s", padding: 0 }}
+            onMouseEnter={e => e.target.style.color = C.teal} onMouseLeave={e => e.target.style.color = C.textBody}>{l.replace("-", " ")}</button>))}
+        </div>
+        <button className="mobile-burger" onClick={() => setOpen(!open)} style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: 8 }}>
+          <div style={{ width: 28, height: 2, background: "#fff", marginBottom: 7, transition: "0.3s", transform: open ? "rotate(45deg) translateY(9px)" : "none" }} />
+          <div style={{ width: 28, height: 2, background: "#fff", marginBottom: 7, opacity: open ? 0 : 1, transition: "0.3s" }} />
+          <div style={{ width: 28, height: 2, background: "#fff", transition: "0.3s", transform: open ? "rotate(-45deg) translateY(-9px)" : "none" }} />
+        </button>
+      </div>
+      {open && <div style={{ background: C.bg, padding: "24px clamp(20px,4vw,48px) 32px", display: "flex", flexDirection: "column", gap: 24, borderBottom: `1px solid ${C.border}` }}>
+        {links.map(l => <button key={l} onClick={() => go(l)} style={{ background: "none", border: "none", textAlign: "left", fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "#fff", cursor: "pointer", textTransform: "uppercase", letterSpacing: "2px" }}>{l.replace("-", " ")}</button>)}
+      </div>}
+    </nav>
+  );
+}
+
+function Hero() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
+  return (
+    <section id="hero" style={{ minHeight: "100vh", background: `linear-gradient(160deg, ${C.bg} 0%, ${C.blue} 50%, ${C.indigo} 100%)`, display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", overflow: "hidden", padding: "120px clamp(20px,4vw,48px) 80px" }}>
+      <div style={{ position: "absolute", inset: 0, opacity: 0.04, pointerEvents: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+      <div style={{ position: "absolute", top: "-20vh", right: "-10vw", width: "clamp(300px,50vw,600px)", height: "clamp(300px,50vw,600px)", borderRadius: "50%", background: "radial-gradient(circle, rgba(14,198,214,0.07) 0%, transparent 70%)", animation: "pulse-slow 6s ease-in-out infinite" }} />
+      <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%", position: "relative", zIndex: 2 }}>
+        <div style={{ opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(20px)", transition: "all 0.6s ease 0.2s", marginBottom: 32, display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 40, height: 1, background: C.teal }} />
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: C.teal, letterSpacing: "3px", textTransform: "uppercase" }}>Innovation is a human right</span>
+        </div>
+        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(52px, 12vw, 160px)", color: "#fff", lineHeight: 0.9, margin: "0 0 12px", letterSpacing: "-1px", opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(40px)", transition: "all 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s" }}>
+          WE DON'T<br /><span style={{ WebkitTextStroke: "2px #fff", color: "transparent" }}>TEACH TECH</span><span style={{ color: C.teal }}>.</span>
+        </h1>
+        <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(36px, 8vw, 100px)", color: C.teal, lineHeight: 0.95, margin: "0 0 48px", opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(40px)", transition: "all 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s" }}>
+          WE ARM PEOPLE<br />TO SHAPE THE FUTURE.
+        </h2>
+        <div style={{ maxWidth: 520, opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(20px)", transition: "all 0.7s ease 0.7s" }}>
+          <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "clamp(12px, 1.4vw, 14px)", color: C.textBody, lineHeight: 1.8, margin: "0 0 40px" }}>
+            IOKELA is a human-centric innovation consultancy. Microsoft Learning Partner. Certified training on AI, Cloud, Cyber, Edge & beyond. Based in Nice. Building worldwide.
+          </p>
+          <button onClick={() => document.getElementById("join")?.scrollIntoView({ behavior: "smooth" })} style={{ background: C.blue, color: "#fff", border: "none", fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: "3px", padding: "16px 48px", cursor: "pointer", transition: "all 0.3s" }}
+            onMouseEnter={e => { e.target.style.background = C.teal; e.target.style.color = C.bg; }}
+            onMouseLeave={e => { e.target.style.background = C.blue; e.target.style.color = "#fff"; }}
+          >JOIN THE MOVEMENT →</button>
+        </div>
+      </div>
+      <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, animation: "pulse-slow 2s ease-in-out infinite" }}>
+        <div style={{ width: 1, height: 48, background: `linear-gradient(to bottom, ${C.teal}66, transparent)` }} />
+      </div>
+    </section>
+  );
+}
+
+function Manifesto() {
+  const lines = [
+    { text: "We believe innovation belongs to everyone.", accent: false },
+    { text: "Not just the ones with the biggest budgets.", accent: false },
+    { text: "Not just the ones in Silicon Valley.", accent: false },
+    { text: "We believe the best technology", accent: false },
+    { text: "is the one that makes people better.", accent: true },
+    { text: "We certify humans, not machines.", accent: false },
+    { text: "We train teams to think, not just to use.", accent: false },
+    { text: "We design with empathy.", accent: false },
+    { text: "We build with purpose.", accent: false },
+    { text: "If that sounds like you —", accent: false },
+    { text: "you're already one of us.", accent: true },
+  ];
+  return (
+    <section id="manifesto" style={{ background: C.bg, padding: "120px clamp(20px,4vw,48px)", borderTop: `1px solid ${C.border}` }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <SectionLabel num="001" label="Manifesto" />
+        {lines.map((l, i) => (
+          <Reveal key={i} delay={0.04 * i}>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: l.accent ? "clamp(32px, 5.5vw, 64px)" : "clamp(28px, 4.5vw, 52px)", color: l.accent ? C.teal : "#fff", lineHeight: 1.15, margin: "0 0 8px", letterSpacing: "1px" }}>{l.text}</p>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WhatWeDo() {
+  const tracks = [
+    { num: "A", title: "CERTIFIED TRAINING", sub: "Microsoft Learning Partner", desc: "Official certifications in AI, Azure, Cybersecurity, Power Platform, Copilot. Not generic courses — immersive programs designed around how your people actually work.", tags: ["AI Transformation Leader", "Azure Architect", "Cybersecurity Expert", "Copilot Admin"] },
+    { num: "B", title: "CUSTOM PROGRAMS", sub: "Emerging Tech, Your Context", desc: "Tailored training on IoT, Edge Computing, Robotics, Web3, Cloud-native. We co-design curricula with your teams, for your challenges.", tags: ["IoT & Edge", "Robotics", "Web3", "Cloud-Native"] },
+    { num: "C", title: "INNOVATION CONSULTING", sub: "Design Thinking × Deep Tech", desc: "Strategic guidance to turn disruption into advantage. We embed adoption governance, design modular architectures, and build reskilling systems.", tags: ["Strategy", "Design Thinking", "Transformation", "Architecture"] },
+    { num: "D", title: "DIGITAL SOLUTIONS", sub: "Affordable. People-Inspired.", desc: "Digital solutions that energize your production and business — from cloud migration to AI integration. Always starting with the humans who'll use them.", tags: ["Cloud", "AI Integration", "Product Design", "Prototyping"] },
+  ];
+  return (
+    <section id="what-we-do" style={{ background: C.bg, padding: "0 0 80px" }}>
+      <Marquee text="Certified Training · Innovation Consulting · Emerging Tech · Design Thinking · Human-Centric · Microsoft Partner · AI · Cloud · Cyber · Edge" speed={40} />
+      <div style={{ padding: "80px clamp(20px,4vw,48px) 0", maxWidth: 1400, margin: "0 auto" }}>
+        <SectionLabel num="002" label="What We Do" />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 2 }} className="tracks-grid">
+          {tracks.map((t, i) => (
+            <Reveal key={i} delay={0.08 * i}>
+              <div style={{ background: C.bgCard, padding: "clamp(28px,3vw,48px)", minHeight: 340, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden", cursor: "default", transition: "background 0.4s" }}
+                onMouseEnter={e => { e.currentTarget.style.background = C.bgCardHover; e.currentTarget.querySelector(".track-num").style.color = C.indigo; }}
+                onMouseLeave={e => { e.currentTarget.style.background = C.bgCard; e.currentTarget.querySelector(".track-num").style.color = "rgba(27,27,135,0.1)"; }}>
+                <span className="track-num" style={{ position: "absolute", top: -20, right: -10, fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(120px, 16vw, 200px)", color: "rgba(27,27,135,0.1)", lineHeight: 1, transition: "color 0.4s", pointerEvents: "none", userSelect: "none" }}>{t.num}</span>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(28px, 3vw, 40px)", color: "#fff", letterSpacing: "2px", margin: "0 0 4px", lineHeight: 1.1 }}>{t.title}</h3>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: C.teal, letterSpacing: "2px", textTransform: "uppercase" }}>{t.sub}</span>
+                  <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "clamp(11px, 1.2vw, 13px)", color: C.textMuted, lineHeight: 1.8, margin: "20px 0 0", maxWidth: 440 }}>{t.desc}</p>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 24, position: "relative", zIndex: 1 }}>
+                  {t.tags.map((tag, j) => <span key={j} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: C.teal + "b3", letterSpacing: "1px", textTransform: "uppercase", padding: "6px 12px", border: "1px solid " + C.teal + "26" }}>{tag}</span>)}
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Credentials() {
+  const creds = [
+    { label: "Microsoft Regional Director", note: "1 of 175 worldwide" },
+    { label: "Azure MVP", note: "Most Valuable Professional" },
+    { label: "Microsoft Learning Partner", note: "Official certification delivery" },
+    { label: "Cybersecurity Architect Expert", note: "Certified" },
+    { label: "AI Transformation Leader", note: "Certified" },
+    { label: "Solutions Architect", note: "Azure Expert" },
+  ];
+  return (
+    <section style={{ background: C.bg, padding: "80px clamp(20px,4vw,48px)", borderTop: `1px solid ${C.border}` }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <SectionLabel num="003" label="Credentials" />
+        <Reveal delay={0.1}>
+          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(24px, 3.5vw, 44px)", color: "#fff", lineHeight: 1.15, margin: "0 0 48px", maxWidth: 700 }}>
+            We don't just talk about emerging tech.<br /><span style={{ color: C.teal }}>We're certified to deliver it.</span>
+          </p>
+        </Reveal>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }} className="cred-grid">
+          {creds.map((c, i) => (
+            <Reveal key={i} delay={0.05 * i}>
+              <div style={{ padding: "32px 28px", borderLeft: `2px solid ${C.border}`, transition: "border-color 0.3s" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = C.teal}
+                onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: "1px", marginBottom: 6 }}>{c.label}</div>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: C.sectionNum, letterSpacing: "2px", textTransform: "uppercase" }}>{c.note}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Community() {
+  return (
+    <section id="community" style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.indigo})`, padding: "100px clamp(20px,4vw,48px)", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, opacity: 0.06, pointerEvents: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+      <div style={{ maxWidth: 1000, margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <Reveal>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "3px", textTransform: "uppercase" }}>004</span>
+            <div style={{ width: 40, height: 1, background: "rgba(255,255,255,0.2)" }} />
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "3px", textTransform: "uppercase" }}>Community</span>
+          </div>
+        </Reveal>
+        <Reveal delay={0.1}><h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(40px, 7vw, 80px)", color: "#fff", lineHeight: 0.95, margin: "0 0 32px" }}>INNOVATION IS<br />NOT A PRIVILEGE.</h2></Reveal>
+        <Reveal delay={0.2}><p style={{ fontFamily: "'Space Mono', monospace", fontSize: "clamp(12px, 1.4vw, 14px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8, maxWidth: 560, margin: "0 0 32px" }}>Through <strong style={{ color: C.gold }}>CloudHersity</strong>, we mentor young people from disadvantaged backgrounds, people with dyslexia and Asperger's, and those from underprivileged communities — helping them earn professional cloud and AI certifications.</p></Reveal>
+        <Reveal delay={0.3}><p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(22px, 3vw, 36px)", color: "#fff", lineHeight: 1.15, margin: "0 0 40px" }}>Because innovation isn't just about<br />what we build. It's about <span style={{ textDecoration: "underline", textDecorationColor: C.gold, textUnderlineOffset: "4px" }}>who gets to build it</span>.</p></Reveal>
+        <Reveal delay={0.4}>
+          <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
+            {[{ num: "∞", label: "Belief in potential" }, { num: "100%", label: "Free mentoring" }, { num: "AI + Cloud", label: "Certification paths" }].map((s, i) => (
+              <div key={i}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 36, color: C.gold }}>{s.num}</div>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "2px", textTransform: "uppercase" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Join() {
+  return (
+    <section id="join" style={{ background: C.bg, padding: "120px clamp(20px,4vw,48px)", borderTop: `1px solid ${C.border}` }}>
+      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+        <SectionLabel num="005" label="Join" />
+        <Reveal delay={0.1}><h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(40px, 7vw, 80px)", color: "#fff", lineHeight: 0.95, margin: "0 0 24px" }}>READY TO<br /><span style={{ color: C.teal }}>MOVE DIFFERENTLY?</span></h2></Reveal>
+        <Reveal delay={0.2}><p style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, color: C.textMuted, lineHeight: 1.8, margin: "0 0 48px", maxWidth: 480 }}>Whether you need certified training, strategic consulting, or want to co-build something bold — we want to hear from you.</p></Reveal>
+        <Reveal delay={0.25}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {["Name", "Company", "Email"].map((ph, i) => (
+              <input key={i} placeholder={ph} style={{ background: C.bgCard, border: "none", borderBottom: `1px solid ${C.border}`, padding: "20px 24px", color: "#fff", fontFamily: "'Space Mono', monospace", fontSize: 14, outline: "none", transition: "border-color 0.3s, background 0.3s" }}
+                onFocus={e => { e.target.style.borderColor = C.teal; e.target.style.background = C.bgCardHover; }}
+                onBlur={e => { e.target.style.borderColor = C.border; e.target.style.background = C.bgCard; }} />
+            ))}
+            <select style={{ background: C.bgCard, border: "none", borderBottom: `1px solid ${C.border}`, padding: "20px 24px", color: C.textMuted, fontFamily: "'Space Mono', monospace", fontSize: 14, outline: "none", appearance: "none" }}>
+              <option>What are you looking for?</option>
+              <option>Microsoft Certified Training</option>
+              <option>Custom Emerging Tech Program</option>
+              <option>Innovation Consulting</option>
+              <option>Digital Solutions</option>
+              <option>Community / CloudHersity</option>
+            </select>
+            <textarea placeholder="Tell us what you're building..." rows={4} style={{ background: C.bgCard, border: "none", borderBottom: `1px solid ${C.border}`, padding: "20px 24px", color: "#fff", resize: "none", fontFamily: "'Space Mono', monospace", fontSize: 14, outline: "none", transition: "border-color 0.3s" }}
+              onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = C.border} />
+          </div>
+        </Reveal>
+        <Reveal delay={0.35}>
+          <button style={{ marginTop: 32, background: C.blue, color: "#fff", border: "none", fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "3px", padding: "18px 64px", cursor: "pointer", width: "100%", transition: "all 0.3s" }}
+            onMouseEnter={e => { e.target.style.background = C.teal; e.target.style.color = C.bg; }}
+            onMouseLeave={e => { e.target.style.background = C.blue; e.target.style.color = "#fff"; }}
+          >SEND IT →</button>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer style={{ background: C.indigo, borderTop: `1px solid ${C.border}`, padding: "48px clamp(20px,4vw,48px) 32px" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 32 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <img src={PICTO} alt="" style={{ height: 28, width: 28, objectFit: "contain", borderRadius: "50%" }} />
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: "#fff", letterSpacing: "2px" }}>IOKELA</span>
+          </div>
+          <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: C.textMuted, letterSpacing: "1px", margin: 0 }}>HUMAN-CENTRIC INNOVATION · NICE, FRANCE</p>
+        </div>
+        <div style={{ display: "flex", gap: 32 }}>
+          {["LinkedIn", "X / Twitter", "Email"].map(l => (
+            <span key={l} style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: C.sectionNum, letterSpacing: "1px", cursor: "pointer", transition: "color 0.3s" }}
+              onMouseEnter={e => e.target.style.color = C.teal} onMouseLeave={e => e.target.style.color = C.sectionNum}>{l}</span>
+          ))}
+        </div>
+        <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: "rgba(44,31,85,0.4)", margin: 0 }}>© {new Date().getFullYear()} IOKELA — All rights reserved.</p>
+      </div>
+    </footer>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Nav />
+      <Hero />
+      <Manifesto />
+      <WhatWeDo />
+      <Credentials />
+      <Community />
+      <Join />
+      <Footer />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
